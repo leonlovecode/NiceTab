@@ -1,7 +1,7 @@
 import { useContext, useCallback, useEffect, useState } from 'react';
 import { browser, Tabs } from 'wxt/browser';
 import { ThemeProvider } from 'styled-components';
-import { theme, Space, Dropdown, Button, type MenuProps, Tooltip } from 'antd';
+import { theme, Space, Dropdown, Button, Switch, type MenuProps, Tooltip } from 'antd';
 import {
   DownOutlined,
   CompressOutlined,
@@ -74,6 +74,7 @@ export default function App() {
   const [modules, setModules] = useState<PopupModuleNames[]>([]);
   const [actionBtns, setActionBtns] = useState<ActionBtnItem[]>([]);
   const [isCompact, setIsCompact] = useState(true);
+  const [isShowPinnedTabs, setIsShowPinnedTabs] = useState(false);
 
   // 快捷跳转
   const quickJumpBtns = [
@@ -220,6 +221,19 @@ export default function App() {
     [tabs],
   );
 
+  const handlePinnedSwitchChange = useCallback(async (checked: boolean) => {
+    setIsShowPinnedTabs(checked);
+    browser.tabs.query({ currentWindow: true }).then(async allTabs => {
+      const { tab: adminTab } = await getAdminTabInfo();
+      handleTabsChange(
+        allTabs?.filter(t => {
+          if (t.id === adminTab?.id) return false;
+          return checked || !t.pinned;
+        }),
+      );
+    });
+  }, []);
+
   const handleTabsChange = useCallback(async (tabs: Tabs.Tab[]) => {
     setTabs(tabs);
     let groupList: GroupListItem[] = [];
@@ -274,7 +288,12 @@ export default function App() {
     if (modules.includes('openedTabs')) {
       browser.tabs.query({ currentWindow: true }).then(async allTabs => {
         const { tab: adminTab } = await getAdminTabInfo();
-        handleTabsChange(allTabs?.filter(t => t.id !== adminTab?.id && !t.pinned));
+        handleTabsChange(
+          allTabs?.filter(t => {
+            if (t.id === adminTab?.id) return false;
+            return isShowPinnedTabs || !t.pinned;
+          }),
+        );
       });
     }
   };
@@ -306,6 +325,19 @@ export default function App() {
     return null;
   };
 
+  function PinnedTabsHeaderMarkup({ isCompact }: { isCompact: boolean }) {
+    return (
+      <div className={`pinned-tabs-switch-header ${isCompact ? 'compact' : ''}`}>
+        <span>{$fmt('home.displayPinnedTabs')}</span>
+        <Switch
+          checked={isShowPinnedTabs}
+          size="small"
+          onChange={handlePinnedSwitchChange}
+        ></Switch>
+      </div>
+    );
+  }
+
   return (
     <ThemeProvider theme={{ ...themeTypeConfig, ...token }}>
       <StyledContainer className="popup-container select-none">
@@ -324,62 +356,67 @@ export default function App() {
             />
           </Tooltip>
           {isCompact ? (
-            <div className="compact-toolbar">
-              {/* GitHub */}
-              <Tooltip title={$fmt('common.goToGithub')} placement="bottom">
-                <Button
-                  type="text"
-                  icon={<GithubOutlined />}
-                  onClick={() =>
-                    openNewTab(GITHUB_URL, { active: true, openToNext: true })
-                  }
-                />
-              </Tooltip>
+            <>
+              <div className="compact-toolbar">
+                {/* GitHub */}
+                <Tooltip title={$fmt('common.goToGithub')} placement="bottom">
+                  <Button
+                    type="text"
+                    icon={<GithubOutlined />}
+                    onClick={() =>
+                      openNewTab(GITHUB_URL, { active: true, openToNext: true })
+                    }
+                  />
+                </Tooltip>
 
-              {/* Goto Actions */}
-              {modules.includes('goto') &&
-                quickJumpBtns
-                  .filter(item => !item.disabled)
-                  .map(item => (
-                    <Tooltip key={item.path} title={item.label} placement="bottom">
-                      <Button
-                        type="text"
-                        icon={getActionIcon('', item.path)}
-                        onClick={item.onClick}
-                      />
-                    </Tooltip>
-                  ))}
-
-              {/* Functional Actions */}
-              {modules.includes('actions') &&
-                actionBtns.map(item => {
-                  if (item.type === 'group' && item.children?.length) {
-                    return (
-                      <Dropdown
-                        key={item.key}
-                        menu={{
-                          items: item.children as MenuProps['items'],
-                          onClick: item.onClick,
-                        }}
-                        placement="bottomLeft"
-                      >
-                        <Button type="text" icon={getActionIcon(item.key)} />
-                      </Dropdown>
-                    );
-                  } else {
-                    return (
-                      <Tooltip key={item.key} title={item.label} placement="bottom">
+                {/* Goto Actions */}
+                {modules.includes('goto') &&
+                  quickJumpBtns
+                    .filter(item => !item.disabled)
+                    .map(item => (
+                      <Tooltip key={item.path} title={item.label} placement="bottom">
                         <Button
                           type="text"
-                          disabled={item.disabled}
+                          icon={getActionIcon('', item.path)}
                           onClick={item.onClick}
-                          icon={getActionIcon(item.key)}
                         />
                       </Tooltip>
-                    );
-                  }
-                })}
-            </div>
+                    ))}
+
+                {/* Functional Actions */}
+                {modules.includes('actions') &&
+                  actionBtns.map(item => {
+                    if (item.type === 'group' && item.children?.length) {
+                      return (
+                        <Dropdown
+                          key={item.key}
+                          menu={{
+                            items: item.children as MenuProps['items'],
+                            onClick: item.onClick,
+                          }}
+                          placement="bottomLeft"
+                        >
+                          <Button type="text" icon={getActionIcon(item.key)} />
+                        </Dropdown>
+                      );
+                    } else {
+                      return (
+                        <Tooltip key={item.key} title={item.label} placement="bottom">
+                          <Button
+                            type="text"
+                            disabled={item.disabled}
+                            onClick={item.onClick}
+                            icon={getActionIcon(item.key)}
+                          />
+                        </Tooltip>
+                      );
+                    }
+                  })}
+              </div>
+              {modules.includes('openedTabs') && tabGroupList.length && (
+                <PinnedTabsHeaderMarkup isCompact={isCompact} />
+              )}
+            </>
           ) : (
             <>
               {/* 该模块不会渲染，目前未配置模块时，单击扩展图标会直接发送所有标签页，不会打开popup面板 */}
@@ -471,7 +508,10 @@ export default function App() {
                 </div>
               )}
               {modules.includes('openedTabs') && (
-                <div className="tab-list-title">{$fmt('common.openedTabs')}：</div>
+                <div className="tab-list-title">
+                  <span>{$fmt('common.openedTabs')}：</span>
+                  <PinnedTabsHeaderMarkup isCompact={isCompact} />
+                </div>
               )}
             </>
           )}

@@ -80,6 +80,8 @@ const enUS: Record<LocaleKey, string> = {
   'home.getPermission.tabGroups': 'Get "tabGroups" Permission',
   'home.getPermission.tabGroups.tip': 'Grant "tabGroups" permission to access the native tab group feature for a better experience!',
 
+  'home.displayPinnedTabs': 'Display Pinned Tabs?',
+
   'home.help.tip.userGuide': 'For more information, please refer to the {userGuide}.',
   'home.help.reminder.start': 'For security reasons, Firefox may not allow privileged URLs such as:',
   'home.help.reminder.list': `
