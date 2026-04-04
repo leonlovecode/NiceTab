@@ -38,7 +38,6 @@ export default function FormModuleOpen(
           values: { mark: '：' },
         })}
         name={RESTORE_IN_NEW_WINDOW}
-        {...formItemProps}
       >
         <Radio.Group>
           <Radio value={true}>{$fmt('common.yes')}</Radio>

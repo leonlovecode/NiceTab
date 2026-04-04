@@ -147,6 +147,7 @@ export enum ENUM_SETTINGS_PROPS {
   OPEN_ADMIN_TAB_AFTER_SEND_TABS = 'openAdminTabAfterSendTabs', // 发送标签页后是否打开管理后台
   CLOSE_TABS_AFTER_SEND_TABS = 'closeTabsAfterSendTabs', // 发送标签页后是否关闭标签页
   ACTION_AUTO_CLOSE_FLAGS = 'actionAutoCloseFlags', // 各种发送标签页操作的自动关闭标签页标志
+  CREATE_NEW_GROUP_ON_SEND_SINGLE_TAB = 'createNewGroupOnSendSingleTab', // 发送单个标签页时是否创建新的标签组
   ALLOW_DUPLICATE_TABS = 'allowDuplicateTabs', // 同一个标签组中是否允许重复的标签页
   ALLOW_DUPLICATE_GROUPS = 'allowDuplicateGroups', // 同一个分类中是否允许重复的标签组
   /* 打开标签页配置 */

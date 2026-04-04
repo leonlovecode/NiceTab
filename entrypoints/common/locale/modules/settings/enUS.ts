@@ -42,6 +42,8 @@ const enUS: Record<LocaleKey, string> = {
   'settings.closeTabsAfterSendTabs.no': 'Do not',
   'settings.actionAutoCloseFlags': 'Automatically close tabs when sending through selected actions.',
   'settings.actionAutoCloseFlags.tooltip': 'Effective when the setting "Automatically close tabs when sending tabs" is set to "Do not".',
+  'settings.createNewGroupOnSendSingleTab': 'Create a new tab group when sending a single tab?',
+  'settings.createNewGroupOnSendSingleTab.tooltip': 'If "No" is selected, the tab will be automatically sent to the first unstarred/unlocked tab group in the Staging Area.',
   'settings.allowDuplicateTabs': 'Retain duplicate tabs when sending tabs?',
   'settings.allowDuplicateTabs.yes': 'Retain',
   'settings.allowDuplicateTabs.no': 'Remove duplicate tabs (for the tabs being sent and when merging tab groups)',
