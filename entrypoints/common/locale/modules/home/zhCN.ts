@@ -43,6 +43,8 @@ const zhCN = {
   'home.tabGroup.unstar': '取消星标',
   'home.tabGroup.recover': '还原该组',
   'home.tabGroup.open': '打开该组',
+  'home.tabGroup.addGroupBefore': '在上方新建标签组',
+  'home.tabGroup.addGroupAfter': '在下方新建标签组',
   'home.tabGroup.tabsSortAsc': '标签名称升序',
   'home.tabGroup.tabsSortDesc': '标签名称降序',
 

@@ -17,6 +17,7 @@ import {
   SortDescendingOutlined,
 } from '@ant-design/icons';
 import copyToClipboard from 'copy-to-clipboard';
+import { LuFolderUp, LuFolderDown } from 'react-icons/lu';
 import { IconRepeat } from '~/entrypoints/common/components/icon/CustomIcon';
 import { GroupItem, TabItem, ActionBtnStyle } from '~/entrypoints/types';
 import { type LocaleKeys } from '~/entrypoints/common/locale';
@@ -83,6 +84,7 @@ type TabGroupProps = GroupItem & {
   actionBtnStyle?: ActionBtnStyle;
   onChange?: (data: Partial<GroupItem>) => void;
   onRemove?: () => void;
+  onCreate?: (tagId: string, groupId: string, pos: 'before' | 'after') => void;
   onRestore?: () => void;
   onStarredChange?: (isStarred: boolean) => void;
   onDedup?: () => void;
@@ -112,6 +114,7 @@ function TabGroup({
   actionBtnStyle = 'text',
   onChange,
   onRemove,
+  onCreate,
   onRestore,
   onStarredChange,
   onDedup,
@@ -357,6 +360,18 @@ function TabGroup({
         label: $fmt(actionMap['restore'].labelKey),
         icon: <ExportOutlined />,
         onClick: () => onRestore?.(),
+      },
+      {
+        key: 'addGroupBefore',
+        label: $fmt(actionMap['addGroupBefore'].labelKey),
+        icon: <LuFolderUp />,
+        onClick: () => onCreate?.(tagId!, groupId, 'before'),
+      },
+      {
+        key: 'addGroupAfter',
+        label: $fmt(actionMap['addGroupAfter'].labelKey),
+        icon: <LuFolderDown />,
+        onClick: () => onCreate?.(tagId!, groupId, 'after'),
       },
       {
         key: 'lock',

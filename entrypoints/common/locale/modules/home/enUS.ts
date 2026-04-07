@@ -45,6 +45,8 @@ const enUS: Record<LocaleKey, string> = {
   'home.tabGroup.unstar': 'Untop',
   'home.tabGroup.recover': 'Recover',
   'home.tabGroup.open': 'Open Group',
+  'home.tabGroup.addGroupBefore': 'Create Group Before',
+  'home.tabGroup.addGroupAfter': 'Create Group After',
   'home.tabGroup.tabsSortAsc': 'Title Ascending',
   'home.tabGroup.tabsSortDesc': 'Title Descending',
 

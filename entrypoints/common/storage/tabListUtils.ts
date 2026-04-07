@@ -343,13 +343,24 @@ export default class TabListUtils {
       tabList: [],
     };
   }
-  async createTabGroup(tagId: Key, tabGroup?: GroupItem) {
+  // 创建标签组 tagId: 分类id, tabGroup: 新创建的标签组数据（可空）, groupId: 标签组id, pop: before | after
+  async createTabGroup(
+    tagId: Key,
+    tabGroup?: GroupItem,
+    groupId?: Key,
+    pos?: 'before' | 'after',
+  ) {
     const tagList = await this.getTagList();
     const newGroup = Object.assign(this.getInitialTabGroup(), tabGroup);
     for (let tag of tagList) {
       if (tag.tagId === tagId) {
-        const index = tag.groupList.findIndex(g => !g.isStarred);
-        tag.groupList.splice(index > -1 ? index : tag.groupList.length, 0, newGroup);
+        if (!groupId) {
+          const index = tag.groupList.findIndex(g => !g.isStarred);
+          tag.groupList.splice(index > -1 ? index : tag.groupList.length, 0, newGroup);
+        } else {
+          const index = tag.groupList.findIndex(g => g.groupId === groupId);
+          tag.groupList.splice(index + (pos === 'after' ? 1 : 0), 0, newGroup);
+        }
         break;
       }
     }

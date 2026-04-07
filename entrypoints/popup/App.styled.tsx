@@ -122,7 +122,7 @@ export const StyledContainer = styled.div<{ theme: StyledThemeProps }>`
   }
   .block-opened-tabs {
     flex: 1;
-    padding: 12px;
+    padding: 12px 0;
     overflow-y: auto;
   }
 `;
