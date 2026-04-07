@@ -31,6 +31,7 @@ import Store from './instanceStore';
 const {
   OPENING_TABS_ORDER,
   DELETE_UNLOCKED_EMPTY_GROUP,
+  CREATE_NEW_GROUP_ON_SEND_SINGLE_TAB,
   ALLOW_DUPLICATE_TABS,
   ALLOW_DUPLICATE_GROUPS,
   LINK_TEMPLATE,
@@ -342,13 +343,24 @@ export default class TabListUtils {
       tabList: [],
     };
   }
-  async createTabGroup(tagId: Key, tabGroup?: GroupItem) {
+  // 创建标签组 tagId: 分类id, tabGroup: 新创建的标签组数据（可空）, groupId: 标签组id, pop: before | after
+  async createTabGroup(
+    tagId: Key,
+    tabGroup?: GroupItem,
+    groupId?: Key,
+    pos?: 'before' | 'after',
+  ) {
     const tagList = await this.getTagList();
     const newGroup = Object.assign(this.getInitialTabGroup(), tabGroup);
     for (let tag of tagList) {
       if (tag.tagId === tagId) {
-        const index = tag.groupList.findIndex(g => !g.isStarred);
-        tag.groupList.splice(index > -1 ? index : tag.groupList.length, 0, newGroup);
+        if (!groupId) {
+          const index = tag.groupList.findIndex(g => !g.isStarred);
+          tag.groupList.splice(index > -1 ? index : tag.groupList.length, 0, newGroup);
+        } else {
+          const index = tag.groupList.findIndex(g => g.groupId === groupId);
+          tag.groupList.splice(index + (pos === 'after' ? 1 : 0), 0, newGroup);
+        }
         break;
       }
     }
@@ -912,12 +924,20 @@ export default class TabListUtils {
       await this.setTagList(this.tagList);
       return { tagId: targetTagId, groupId: targetGroupId };
     }
-    // 不存在标签组或者createNewGroup=true，就创建一个新标签组
-    const newtabGroup = this.getInitialTabGroup();
+
     if (!settings?.[ALLOW_DUPLICATE_TABS]) {
       newTabs = getUniqueList(newTabs, 'url');
     }
-    newtabGroup.tabList = newTabs;
+    const createNewGroup = settings?.[CREATE_NEW_GROUP_ON_SEND_SINGLE_TAB] || false;
+    // createNewGroup=true，就创建一个新标签组
+    let newtabGroup = this.getInitialTabGroup();
+    if (createNewGroup || newTabs.length > 1) {
+      newtabGroup.tabList = newTabs;
+    } else {
+      const index = tag0?.groupList?.findIndex?.(g => !g.isStarred && !g.isLocked);
+      newtabGroup = ~index ? tag0?.groupList?.[index] : newtabGroup;
+      newtabGroup.tabList = [...newTabs, ...newtabGroup.tabList];
+    }
 
     if (tag0) {
       if (!settings?.[ALLOW_DUPLICATE_GROUPS]) {
@@ -933,8 +953,12 @@ export default class TabListUtils {
           return { tagId: tag0.tagId, groupId: sameNameGroup.groupId };
         }
       }
-      const index = tag0.groupList.findIndex(g => !g.isStarred);
-      tag0.groupList.splice(index > -1 ? index : tag0.groupList.length, 0, newtabGroup);
+      const index = tag0.groupList.findIndex(g => !g.isStarred && !g.isLocked);
+      if (createNewGroup) {
+        tag0.groupList.splice(index > -1 ? index : tag0.groupList.length, 0, newtabGroup);
+      } else {
+        tag0.groupList.splice(index > -1 ? index : tag0.groupList.length, 1, newtabGroup);
+      }
       // await this.setTagList([tag0, ...this.tagList.slice(1)]);
       await this.setTagList(this.tagList);
       return { tagId: tag0.tagId, groupId: newtabGroup.groupId };

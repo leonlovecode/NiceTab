@@ -42,6 +42,8 @@ const enUS: Record<LocaleKey, string> = {
   'settings.closeTabsAfterSendTabs.no': 'Do not',
   'settings.actionAutoCloseFlags': 'Automatically close tabs when sending through selected actions.',
   'settings.actionAutoCloseFlags.tooltip': 'Effective when the setting "Automatically close tabs when sending tabs" is set to "Do not".',
+  'settings.createNewGroupOnSendSingleTab': 'Create a new tab group when sending a single tab?',
+  'settings.createNewGroupOnSendSingleTab.tooltip': 'If "No" is selected, the tab will be automatically sent to the first unstarred/unlocked tab group in the Staging Area.',
   'settings.allowDuplicateTabs': 'Retain duplicate tabs when sending tabs?',
   'settings.allowDuplicateTabs.yes': 'Retain',
   'settings.allowDuplicateTabs.no': 'Remove duplicate tabs (for the tabs being sent and when merging tab groups)',
@@ -58,7 +60,7 @@ const enUS: Record<LocaleKey, string> = {
   'settings.silentOpenTabModifierKey': 'Modifier key for opening a tab silently (in background):',
   'settings.openTabModifierKey': 'Modifier key for opening a tab in the foreground:',
   'settings.openTabModifierKey.tooltip': 'Foreground opening takes precedence over background opening. When the modifier keys for both types of opening are the same, the foreground opening action will be triggered.',
-  'settings.openingTabsOrder': 'The order of opening multiple tabs:',
+  'settings.openingTabsOrder': 'The order when opening multiple tabs:',
   'settings.unnamedGroupRestoreAsGroup': 'Restore the unnamed group as a browser tab group?',
   'settings.namedGroupRestoreAsGroup': 'Restore the named group as a browser tab group?',
 

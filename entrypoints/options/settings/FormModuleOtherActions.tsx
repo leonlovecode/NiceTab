@@ -42,7 +42,6 @@ export default function FormModuleOtherActions(
           values: { mark: '：' },
         })}
         name={DELETE_UNLOCKED_EMPTY_GROUP}
-        {...formItemProps}
       >
         <Radio.Group>
           <Radio value={true}>

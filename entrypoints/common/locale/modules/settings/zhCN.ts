@@ -40,6 +40,8 @@ const zhCN = {
   'settings.closeTabsAfterSendTabs.no': '不要自动关闭标签页',
   'settings.actionAutoCloseFlags': '当执行下面选中的操作时将自动关闭标签页',
   'settings.actionAutoCloseFlags.tooltip': '当[发送标签页时-是否自动关闭标签页]设置为“不要自动关闭标签页”时生效',
+  'settings.createNewGroupOnSendSingleTab': '发送单个标签页时是否创建新的标签组',
+  'settings.createNewGroupOnSendSingleTab.tooltip': '若选择否，则自动发送到中转站中第一个非星标/非锁定的标签组中',
   'settings.allowDuplicateTabs': '发送标签页时-是否保留重复的标签页{mark}',
   'settings.allowDuplicateTabs.yes': '保留',
   'settings.allowDuplicateTabs.no': '去重（针对发送的标签页以及标签组合并时的标签页）',
