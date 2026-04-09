@@ -14,8 +14,8 @@ stats-*.json
 .wxt
 web-ext.config.ts
 .env*
-public/docs
-!public/docs/css
+public/docs/*
+!public/docs/css/
 
 # Editor directories and files
 .vscode/*
