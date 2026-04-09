@@ -359,6 +359,13 @@ export default class TabListUtils {
           tag.groupList.splice(index > -1 ? index : tag.groupList.length, 0, newGroup);
         } else {
           const index = tag.groupList.findIndex(g => g.groupId === groupId);
+          if (pos === 'before') {
+            const currGroup = tag.groupList[index];
+            if (currGroup.isStarred) newGroup.isStarred = true;
+          } else {
+            const nextGroup = tag.groupList[index + 1];
+            if (nextGroup?.isStarred) newGroup.isStarred = true;
+          }
           tag.groupList.splice(index + (pos === 'after' ? 1 : 0), 0, newGroup);
         }
         break;

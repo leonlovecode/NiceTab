@@ -40,7 +40,7 @@ import { HomeContext } from './hooks/treeData';
 import { eventEmitter } from './hooks/homeCustomEvent';
 import EditInput from '../components/EditInput';
 import ActionBtnList, { type ActionOptionItem } from '../components/ActionBtnList';
-import TabListItem from './TabListItem';
+import TabListItem, { type QuickSelectFunc } from './TabListItem';
 import {
   StyledGroupWrapper,
   StyledGroupHeader,
@@ -170,6 +170,38 @@ function TabGroup({
       },
     });
   }, [$fmt]);
+
+  // 快捷选择，起始位置
+  const [quickSelectedTabIds, setQuickSelectedTabIds] = useState<string[]>([]);
+  const handleTabQuickSelect: QuickSelectFunc = async (tab, selected) => {
+    // 由于快捷选择直接复用了checkbox的选择，onChange 回调中的setSelectedTabIds会覆盖quickSelect的setSelectedTabIds
+    // 所以这里延时100ms，等待onChange回调执行完毕，再执行后面的操作
+    await new Promise(r => setTimeout(r, 100));
+
+    if (quickSelectedTabIds.length === 0) {
+      selected && setQuickSelectedTabIds([tab.tabId]);
+    } else if (quickSelectedTabIds.length === 1) {
+      if (selected) {
+        let startIndex = tabList.findIndex(item => item.tabId === quickSelectedTabIds[0]);
+        let endIndex = tabList.findIndex(item => item.tabId === tab.tabId);
+        if (startIndex > endIndex) {
+          [startIndex, endIndex] = [endIndex, startIndex];
+        }
+
+        const _selectedTabIds = tabList
+          .slice(startIndex, endIndex + 1)
+          .map(item => item.tabId);
+
+        const newSelectedIds = [...new Set([...selectedTabIds, ..._selectedTabIds])];
+        setSelectedTabIds(newSelectedIds);
+        setQuickSelectedTabIds([]);
+      } else {
+        quickSelectedTabIds[0] === tab.tabId && setQuickSelectedTabIds([]);
+      }
+    } else {
+      setQuickSelectedTabIds([]);
+    }
+  };
 
   // 已选择的tabItem数组
   const selectedTabs = useMemo(() => {
@@ -696,12 +728,14 @@ function TabGroup({
                         group={group}
                         {...tab}
                         highlight={
-                          tab.tabId != undefined &&
-                          treeDataHook?.highlightTabId === tab.tabId
+                          (tab.tabId != undefined &&
+                            treeDataHook?.highlightTabId === tab.tabId) ||
+                          quickSelectedTabIds.includes(tab.tabId)
                         }
                         onRemove={handleTabRemove}
                         onChange={handleTabChange}
                         onCopy={handleTabCopy}
+                        onQuickSelect={handleTabQuickSelect}
                       />
                     </DndComponent>
                   ))}
