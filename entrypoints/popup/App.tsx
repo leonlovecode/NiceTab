@@ -181,61 +181,11 @@ export default function App() {
     browser.tabs.highlight({ tabs: [tab.index] });
   }, []);
 
-  const handleTabDiscard = useCallback(async (tab: Tabs.Tab) => {
-    if (tab.active || tab.discarded) return;
-
-    tab.id && (await browser.tabs.discard(tab.id));
-    browser.tabs.query({ currentWindow: true }).then(async allTabs => {
-      const { tab: adminTab } = await getAdminTabInfo();
-      handleTabsChange(allTabs?.filter(t => t.id !== adminTab?.id && !t.pinned));
-    });
-  }, []);
-
-  const handleTabRemove = useCallback(
-    async (tab: Tabs.Tab) => {
-      const { tab: adminTab } = await getAdminTabInfo();
-      const newTabs = tabs.filter(
-        t => t.id !== tab.id && t.id !== adminTab?.id && !t.pinned,
-      );
-      handleTabsChange(newTabs);
-      if (tab.id) {
-        await browser.tabs.remove(tab.id);
-        browser.tabs.query({ currentWindow: true }).then(async allTabs => {
-          handleTabsChange(allTabs?.filter(t => t.id !== adminTab?.id && !t.pinned));
-        });
-      }
-    },
-    [tabs],
-  );
-
-  const handleTabAction = useCallback(
-    async (action: TabActions, tab: Tabs.Tab) => {
-      if (action === 'active') {
-        handleTabActive(tab);
-      } else if (action === 'discard') {
-        handleTabDiscard(tab);
-      } else if (action === 'remove') {
-        handleTabRemove(tab);
-      }
-    },
-    [tabs],
-  );
-
-  const handlePinnedSwitchChange = useCallback(async (checked: boolean) => {
-    setIsShowPinnedTabs(checked);
-    browser.tabs.query({ currentWindow: true }).then(async allTabs => {
-      const { tab: adminTab } = await getAdminTabInfo();
-      handleTabsChange(
-        allTabs?.filter(t => {
-          if (t.id === adminTab?.id) return false;
-          return checked || !t.pinned;
-        }),
-      );
-    });
-  }, []);
-
-  const handleTabsChange = useCallback(async (tabs: Tabs.Tab[]) => {
+  const handleTabsChange = useCallback(async (_tabs: Tabs.Tab[]) => {
+    const popupState = await stateUtils.getState('popup');
+    const tabs = _tabs.filter(tab => !!popupState?.isShowPinnedTabs || !tab.pinned);
     setTabs(tabs);
+
     let groupList: GroupListItem[] = [];
     if (!isGroupSupported()) {
       groupList = tabs.map(item => ({
@@ -263,16 +213,65 @@ export default function App() {
         for (const group of groupList) {
           if (group.groupId === -1) continue;
           const tabGroup = await browser.tabGroups.get(group.groupId);
-          console.log('tabGroup', tabGroup);
           group.groupName = tabGroup?.title || group.groupName;
           group.collapsed = tabGroup?.collapsed;
           group.color = tabGroup?.color;
         }
       }
     }
-    console.log('groupList', groupList);
+    // console.log('groupList', groupList);
     setTabGroupList(groupList);
   }, []);
+
+  const handleTabDiscard = useCallback(
+    async (tab: Tabs.Tab) => {
+      if (tab.active || tab.discarded) return;
+
+      tab.id && (await browser.tabs.discard(tab.id));
+      browser.tabs.query({ currentWindow: true }).then(async allTabs => {
+        const { tab: adminTab } = await getAdminTabInfo();
+        handleTabsChange(allTabs?.filter(t => t.id !== adminTab?.id));
+      });
+    },
+    [handleTabsChange],
+  );
+
+  const handleTabRemove = useCallback(
+    async (tab: Tabs.Tab) => {
+      const { tab: adminTab } = await getAdminTabInfo();
+      const newTabs = tabs.filter(t => t.id !== tab.id && t.id !== adminTab?.id);
+      handleTabsChange(newTabs);
+      if (tab.id) {
+        await browser.tabs.remove(tab.id);
+        browser.tabs.query({ currentWindow: true }).then(async allTabs => {
+          handleTabsChange(allTabs?.filter(t => t.id !== adminTab?.id));
+        });
+      }
+    },
+    [tabs, handleTabsChange],
+  );
+
+  const handleTabAction = useCallback(async (action: TabActions, tab: Tabs.Tab) => {
+    if (action === 'active') {
+      handleTabActive(tab);
+    } else if (action === 'discard') {
+      handleTabDiscard(tab);
+    } else if (action === 'remove') {
+      handleTabRemove(tab);
+    }
+  }, []);
+
+  const handlePinnedSwitchChange = useCallback(
+    async (checked: boolean) => {
+      setIsShowPinnedTabs(checked);
+      await stateUtils.setStateByModule('popup', { isShowPinnedTabs: checked });
+      browser.tabs.query({ currentWindow: true }).then(async allTabs => {
+        const { tab: adminTab } = await getAdminTabInfo();
+        handleTabsChange(allTabs?.filter(t => t.id !== adminTab?.id));
+      });
+    },
+    [handleTabsChange],
+  );
 
   const init = async () => {
     const settings = await settingsUtils.getSettings();
@@ -284,16 +283,13 @@ export default function App() {
 
     const popupState = await stateUtils.getState('popup');
     setIsCompact(!!popupState?.isCompact);
+    const _isShowPinnedTabs = !!popupState?.isShowPinnedTabs;
+    setIsShowPinnedTabs(_isShowPinnedTabs);
 
     if (modules.includes('openedTabs')) {
       browser.tabs.query({ currentWindow: true }).then(async allTabs => {
         const { tab: adminTab } = await getAdminTabInfo();
-        handleTabsChange(
-          allTabs?.filter(t => {
-            if (t.id === adminTab?.id) return false;
-            return isShowPinnedTabs || !t.pinned;
-          }),
-        );
+        handleTabsChange(allTabs?.filter(t => t.id !== adminTab?.id));
       });
     }
   };
