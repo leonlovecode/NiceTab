@@ -69,6 +69,7 @@ import useMultiSelection from './hooks/multiSelection';
 const dndKey = dndKeys.tabItem;
 const {
   CONFIRM_BEFORE_DELETING_TABS,
+  CONFIRM_BEFORE_DELETING_GROUPS,
   DELETE_AFTER_RESTORE,
   GROUP_ACTION_BTNS_COMMONLY_USED,
 } = ENUM_SETTINGS_PROPS;
@@ -385,7 +386,14 @@ function TabGroup({
         disabled: tagLocked || isLocked,
         hoverColor: ENUM_COLORS.red,
         // validator: () => !isLocked,
-        onClick: () => setModalVisible(true),
+        onClick: () => {
+          const settings = settingsUtils.settings || {};
+          if (settings[CONFIRM_BEFORE_DELETING_GROUPS]) {
+            setModalVisible(true);
+          } else {
+            onRemove?.();
+          }
+        },
       },
       {
         key: 'restore',

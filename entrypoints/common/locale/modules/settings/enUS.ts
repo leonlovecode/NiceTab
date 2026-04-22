@@ -78,6 +78,7 @@ const enUS: Record<LocaleKey, string> = {
   'settings.deleteUnlockedEmptyGroup.yes': 'Automatically remove (retain locked groups)',
   'settings.deleteUnlockedEmptyGroup.no': 'Do not',
   'settings.confirmBeforeDeletingTabs': 'Confirm before removing tabs?',
+  'settings.confirmBeforeDeletingGroups': 'Confirm before removing tab groups?',
   'settings.linkTemplate': 'Copy links format template for tab groups',
   'settings.linkTemplate.placeholder': 'Default format',
   'settings.linkTemplate.tooltip': 'Format for copy links, using the Mustache format',
