@@ -488,6 +488,7 @@ function TabGroup({
     isStarred,
     onRestore,
     onChange,
+    onRemove,
     onStarredChange,
     openMoveToModal,
     handleCopyLinks,

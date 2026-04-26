@@ -24,7 +24,10 @@ export function useTreeNodeAction(actionFn?: (props: RenderTreeNodeActionProps) 
       setActionParams(props);
       if (props.actionName === 'remove') {
         const settings = settingsUtils.settings || {};
-        if (props.node?.type === 'tabGroup' && !settings[CONFIRM_BEFORE_DELETING_GROUPS]) {
+        if (
+          props.node?.type === 'tabGroup' &&
+          !settings[CONFIRM_BEFORE_DELETING_GROUPS]
+        ) {
           actionFn?.(props);
         } else {
           setRemoveModalVisible(true);

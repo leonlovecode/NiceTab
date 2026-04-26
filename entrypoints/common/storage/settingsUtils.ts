@@ -115,7 +115,7 @@ export default class SettingsUtils {
     /* 其他操作配置 */
     [DELETE_UNLOCKED_EMPTY_GROUP]: true, // 是否删除未锁定的空标签组
     [CONFIRM_BEFORE_DELETING_TABS]: false, // 删除标签页前是否需要确认
-    [CONFIRM_BEFORE_DELETING_GROUPS]: false, // 删除标签组前是否需要确认
+    [CONFIRM_BEFORE_DELETING_GROUPS]: true, // 删除标签组前是否需要确认
     [LINK_TEMPLATE]: '{{url}} | {{title}}', // 复制的链接模板
     [TAB_COUNT_THRESHOLD]: 100, // 分类中标签页超过该数量时，则右侧面板开启虚拟滚动
     [GROUP_INSERT_POSITION]: 'top' as InsertPositions, // 标签组插入位置：在分类的标签组列表顶部还是底部
