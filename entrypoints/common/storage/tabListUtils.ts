@@ -961,7 +961,7 @@ export default class TabListUtils {
         }
       }
       const index = tag0.groupList.findIndex(g => !g.isStarred && !g.isLocked);
-      if (createNewGroup) {
+      if (createNewGroup || newTabs.length > 1) {
         tag0.groupList.splice(index > -1 ? index : tag0.groupList.length, 0, newtabGroup);
       } else {
         tag0.groupList.splice(index > -1 ? index : tag0.groupList.length, 1, newtabGroup);
