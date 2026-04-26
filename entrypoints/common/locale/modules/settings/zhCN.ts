@@ -76,6 +76,7 @@ const zhCN = {
   'settings.deleteUnlockedEmptyGroup.yes': '自动删除（仍保留锁定的空标签组）',
   'settings.deleteUnlockedEmptyGroup.no': '不自动删除',
   'settings.confirmBeforeDeletingTabs': '删除标签页前是否需要确认：',
+  'settings.confirmBeforeDeletingGroups': '删除标签组前是否需要确认：',
   'settings.linkTemplate': '标签组-复制链接模板格式',
   'settings.linkTemplate.placeholder': '默认格式为',
   'settings.linkTemplate.tooltip': '复制链接所用的模板格式, 采用 Mustache 格式',
