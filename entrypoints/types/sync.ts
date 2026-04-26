@@ -60,6 +60,7 @@ export type SyncConfigItemWebDAVProps = WebDAVClientOptions & {
   directory?: string; // 自定义目录字段
   filename_tabList?: string; // 自定义列表文件名
   filename_settings?: string; // 自定义偏好设置文件名
+  autoSync?: boolean;
   syncStatus?: SyncStatus;
   syncResult?: SyncResultItemProps[];
 };
