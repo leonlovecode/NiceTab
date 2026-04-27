@@ -185,6 +185,7 @@ export type SettingsProps = {
   /* 其他操作配置 */
   deleteUnlockedEmptyGroup?: boolean; // 是否删除未锁定的空标签组
   confirmBeforeDeletingTabs?: boolean; // 删除标签页前是否确认
+  confirmBeforeDeletingGroups?: boolean; // 删除标签组前是否确认
   linkTemplate?: string; // 链接模板
   tabCountThreshold?: number; // 分类中标签页超过该数量时，则右侧面板开启虚拟滚动
   groupInsertPosition?: InsertPositions; // 标签组插入位置：在分类的标签组列表顶部还是底部

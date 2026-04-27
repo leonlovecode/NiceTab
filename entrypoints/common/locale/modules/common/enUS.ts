@@ -126,6 +126,7 @@ const enUS: Record<LocaleKey, string> = {
   'common.endsWith': 'Ends With',
   'common.contains': 'Contains',
   'common.regex': 'Regex',
+  'common.wildcard': 'Wildcard',
   'common.directory': 'Directory',
   'common.filename': 'Filename',
   'common.expand': 'Expand',
